@@ -1,0 +1,71 @@
+version: 1
+
+formatters:
+  simple:
+    format: "[%(asctime)s.%(msecs)03d] [pid %(process)d] [%(levelname)s]: %(message)s"
+    datefmt: "%Y-%m-%d %H:%M:%S"
+  extended:
+    format: "[%(asctime)s.%(msecs)03d] [pid %(process)d] [%(levelname)s] - [%(module)s:%(lineno)d]: %(message)s"
+    datefmt: "%Y-%m-%d %H:%M:%S"
+  email:
+    format: "Message Severity: %(levelname)s\r\nModule Locations: %(filename)s %(module)s:%(lineno)d\r\nServer Timestamp: %(asctime)s\r\nMessage:\r\n%(message)s"
+    datefmt: "%Y-%m-%d %H:%M:%S"
+
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: DEBUG
+    formatter: simple
+    stream: ext://sys.stderr
+
+  boing_file_handler:
+    class: logging.FileHandler
+    level: DEBUG
+    filename: ${LOGGING_ROOT}/boing.log
+    formatter: extended
+
+  tasks_file_handler:
+    class: logging.FileHandler
+    level: DEBUG
+    filename: ${LOGGING_ROOT}/tasks.log
+    formatter: extended
+
+  redlist_handler:
+    class: boing.extensions.redlog.handlers.RedlogListHandler
+    level: DEBUG
+    formatter: extended
+    REDLOG_HOST: "communicator-redis"
+    REDLOG_PORT: 6379
+    REDLOG_KEY_PREFIX: "commchat"
+    REDLOG_KEY_TIMEFORMAT: "%Y:%m:%d"
+
+  mail_handler:
+    class: logging.handlers.SMTPHandler
+    level: ERROR
+    formatter: email
+    mailhost: ["smtp.mailtrap.io", 2525]
+    fromaddr: "comm-no-reply@kai-bd.com"
+    toaddrs: ["project-chat-aaaab22hnkornazxmgl2yuez7u@tigerithq.slack.com"]
+    subject: "Communicator Local Services Alert"
+    credentials: ["1d3d376ed42c6b", "530bb739980358"]
+
+loggers:
+  boing_development:
+    handlers:
+      [
+        console,
+        boing_file_handler,
+        redlist_handler
+      ]
+  celery_development:
+    handlers:
+      [
+        console,
+        tasks_file_handler,
+        redlist_handler
+      ]
+
+root:
+  level: NOTSET
+  handlers: [console]
+  propagate: yes
