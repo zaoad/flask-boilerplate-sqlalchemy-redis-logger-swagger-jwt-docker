@@ -1,13 +1,16 @@
 import os
 
-from flask import Flask, app, jsonify
+from flask import Flask, jsonify
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 
 def create_app(app_name: str):
     """Creates a Flask app"""
     instance_name = os.getenv("FLASK_ENV", "development")
     instance_path = os.path.join(os.getcwd(), "instance")
-    print("instanc path", instance_path)
     app = Flask(
         app_name,
         instance_path=instance_path,
