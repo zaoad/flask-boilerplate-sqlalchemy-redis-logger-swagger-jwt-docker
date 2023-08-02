@@ -1,12 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
 
-"""ENV: Flask application environment.
-
-Examples: `development`, `production`, `testing`.
-"""
-ENV = os.getenv("FLASK_ENV", "development")
-
 """SECRET_KEY: Secret key used for signing cookies and tokens.
 
 Application will fail to start if $FLASK_SECRET is not set.
@@ -16,26 +10,14 @@ try:
 except AttributeError:  # pragma: no cover
     raise RuntimeError("Environment variable $FLASK_SECRET was not set")
 
-"""LOGGING_CONFIG: Path to logging configurations.
+FLASK_ENV = os.getenv("FLASK_ENV", "development")
+LOGGING_ROOT = os.getenv("LOGGING_ROOT", "logs")
+LOGGING_CONFIG = os.getenv("LOGGING_CONFIG", f"instance/{FLASK_ENV}/logging.yaml")
 
-Logger extension will read configurations from the specified file.
-"""
-LOGGING_CONFIG = os.getenv("LOGGING_CONFIG", f"instance/{ENV}/logging.yaml")
 
-"""APISPEC_SWAGGER_URL: URL for swagger.json file.
+# Sql database
 
-Set None to disable serving this resource.
-"""
-APISPEC_SWAGGER_URL = "/myapi/apispec/spec"
+SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "postgresql://admin:admin@db:5432/flask_db")
+SQLALCHEMY_TRACK_MODIFICATIONS = False
+BOING_SQLALCHEMY_SCHEMA = os.getenv("BOING_SQLALCHEMY_SCHEMA", "dev")
 
-"""APISPEC_SWAGGER_UI_URL: URL for swagger-ui.
-
-Set None to disable serving this view.
-"""
-APISPEC_SWAGGER_UI_URL = "/myapi/apispec"
-
-"""PROPAGATE_EXCEPTIONS: Flag to bypass FR error handlers for custom exceptions.
-
-Set this to False if you want to use FR error handlers instead.
-"""
-PROPAGATE_EXCEPTIONS = True
