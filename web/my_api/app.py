@@ -3,8 +3,8 @@ import os
 from flask import Flask, jsonify
 from dotenv import load_dotenv
 from flask_cors import CORS
-from my_api.sql_alchemy import client as sql_client
 
+from my_api.sql_alchemy import client as sql_client
 from my_api.apis import api_blueprint
 
 # Load environment variables from .env file
@@ -27,8 +27,4 @@ def create_app(app_name: str):
     sql_client.sql.init_app(app)
     CORS(app)
     app.register_blueprint(api_blueprint)
-    @app.route("/")
-    def hello_world():
-        return jsonify(hello="world 1")
-
     return app
