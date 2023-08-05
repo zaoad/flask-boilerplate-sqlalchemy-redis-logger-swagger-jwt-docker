@@ -17,17 +17,17 @@ class User(BaseModel):
     name = sql.Column(sql.String(USER_FULLNAME_LEN), nullable=False, default="")
     phone = sql.Column(sql.String(USER_PHONE_LEN), nullable=True)
     email = sql.Column(sql.String(USER_EMAIL_LEN), nullable=True)
-    # password = sql.Column(sql.String(USER_PASSWORD_LEN), nullable=True, default="")
-    # roles = sql.relationship(
-    #     TABLE_NAME_ROLE,
-    #     secondary=TABLE_ACCESS_NAME_USER_ROlE,
-    #     back_populates=TABLE_NAME_USER,
-    #     lazy="select",  # list is not small, will give a query object
-    # )
+    password = sql.Column(sql.String(USER_PASSWORD_LEN), nullable=True, default="")
+    roles = sql.relationship(
+        TABLE_NAME_ROLE,
+        secondary=TABLE_ACCESS_NAME_USER_ROlE,
+        back_populates=TABLE_NAME_USER,
+        lazy="select",  # list is not small, will give a query object
+    )
 
-    def __init__(self, name, phone, email):
-        self.user_id = str(uuid4())
+    def __init__(self, name, phone, email, pasword, user_id: str = str(uuid4())):
+        self.user_id = user_id
         self.name = name
         self.phone = phone
         self.email = email
-
+        self.password =pasword

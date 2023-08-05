@@ -7,4 +7,4 @@ class Role(BaseModel):
     __tablename__ = TABLE_NAME_ROLE
     id = sql.Column(sql.Integer, primary_key=True)
     name = sql.Column(sql.String, unique=True)
-    # users = sql.relationship(TABLE_NAME_USER, secondary=TABLE_ACCESS_NAME_USER_ROlE, back_populates=TABLE_NAME_ROLE)
+    users = sql.relationship(TABLE_NAME_USER, secondary=TABLE_ACCESS_NAME_USER_ROlE, back_populates=TABLE_NAME_ROLE)
