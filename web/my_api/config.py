@@ -17,7 +17,7 @@ LOGGING_CONFIG = os.getenv("LOGGING_CONFIG", f"instance/{FLASK_ENV}/logging.yaml
 
 # Sql database
 
-SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "postgresql://admin:admin@db:5432/flask_db")
+SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "postgresql://admin:admin@localhost:5432/flask_db")
 SQLALCHEMY_TRACK_MODIFICATIONS = False
-BOING_SQLALCHEMY_SCHEMA = os.getenv("BOING_SQLALCHEMY_SCHEMA", "dev")
+SQLALCHEMY_SCHEMA = os.getenv("SQLALCHEMY_SCHEMA", "my_schema")
 
