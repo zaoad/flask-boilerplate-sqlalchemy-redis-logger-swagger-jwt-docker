@@ -28,3 +28,10 @@ def get_sha1_hash(data: str) -> str:
         A hexadecimal string with sha1 hash of input string
     """
     return hashlib.sha1(data.encode("utf-8")).hexdigest()
+
+
+def format_update_data(data):
+    for key, value in enumerate(data):
+        if value is None:
+            data.pop(key)
+    return data

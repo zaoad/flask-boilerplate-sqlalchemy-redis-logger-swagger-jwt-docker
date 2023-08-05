@@ -13,6 +13,17 @@ def create_role(data: dict):
         raise e
 
 
+def get_role_info(role_id):
+    try:
+        role, e = role_manager.get_by_id(sql.session, id=role_id)
+        if not role:
+            return None
+        role_info = {"id": role.id, "name": role.nam}
+        return role_info
+    except Exception as e:
+        raise e
+
+
 def update_role(role_id: str, update_data: str):
     role_update_dict = {
         "filter_args_dict": {"id": role_id},

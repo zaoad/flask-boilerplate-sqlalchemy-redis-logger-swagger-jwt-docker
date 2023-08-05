@@ -17,6 +17,17 @@ def add_user_role(user_id, role_id):
         raise e
 
 
+def get_user_role_info(user_id, role_id):
+    try:
+        role, e = user_role_manager.get_by_id(sql.session, user_id=user_id, rol_id=role_id)
+        if not role:
+            return None
+        role_info = {"id": role.id, "name": role.nam}
+        return role_info
+    except Exception as e:
+        raise e
+
+
 def get_user_roles_name(user_id):
     try:
         user_role_list, e = user_role_manager.filter_by({"user_id": user_id, "status": StatusType.ACTIVE.name.lower()})
