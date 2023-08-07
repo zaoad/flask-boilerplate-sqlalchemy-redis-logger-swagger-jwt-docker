@@ -15,7 +15,7 @@ class UserRole(BaseModel):
         index=True,
     )
     role_id = sql.Column(
-        sql.String(UUID4_LEN),
+        sql.Integer,
         sql.ForeignKey(f"{TABLE_ACCESS_NAME_ROLE}.id"),
         nullable=False,
         index=True,

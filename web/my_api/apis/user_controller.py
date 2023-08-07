@@ -109,7 +109,7 @@ class AddRoleAndGetRoles(Resource):
             return Response(HTTPStatus.BAD_REQUEST).error(error=HTTPStatus.BAD_REQUEST,
                                                           detail=f"role_id is required"), HTTPStatus.BAD_REQUEST
         try:
-            user_role_service.add_user_role(user_id, role_id)
+            user_role = user_role_service.add_user_role(user_id, role_id)
             return Response(HTTPStatus.CREATED).success(data={"message": "Role added Successfully"}), HTTPStatus.CREATED
         except Exception as e:
             return Response(HTTPStatus.INTERNAL_SERVER_ERROR).error(error=HTTPStatus.INTERNAL_SERVER_ERROR,

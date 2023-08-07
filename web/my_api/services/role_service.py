@@ -22,7 +22,7 @@ def get_role_info(role_id):
         role, e = role_manager.get_by_id(sql.session, id=role_id)
         if not role:
             return None
-        role_info = {"id": role.id, "name": role.nam}
+        role_info = {"id": role.id, "name": role.name}
         return role_info
     except Exception as e:
         raise e
@@ -34,8 +34,9 @@ def update_role(role_id: str, update_data: str):
         "update_args_dict": update_data
     }
     try:
-        role_manager.update(sql.session, **role_update_dict)
+        role = role_manager.update(sql.session, **role_update_dict)
         sql.session.commit()
+        return {"id": role.id, "name": role.name}
     except Exception as e:
         sql.session.rollback()
         raise e
@@ -54,7 +55,7 @@ def get_all_active_roles():
         role_list_obj, e = role_manager.get_all_by_id(sql.session)
         role_list = []
         for role in role_list_obj:
-            role_list.append(role.name)
+            role_list.append({"id": role.id, "name": role.name})
         return role_list
     except Exception as e:
         raise e

@@ -44,8 +44,9 @@ def update_user(user_id: str, update_data: str):
     }
     try:
         user = user_manager.update(sql.session, **user_update_dict)
+        user_info = user_dict(user)
         sql.session.commit()
-        return user
+        return user_info
     except Exception as e:
         sql.session.rollback()
         raise e
