@@ -64,8 +64,8 @@ def get_all_active_users():
         user_list_obj, e = user_manager.get_all_by_id(sql.session)
         user_list = list()
         if user_list_obj:
-            for user in user_list:
-                user_info = user_info = user_dict(user)
+            for user in user_list_obj:
+                user_info = user_dict(user)
                 user_list.append(user_info)
         return user_list
     except Exception as e:
