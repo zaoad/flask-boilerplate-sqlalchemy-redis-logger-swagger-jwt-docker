@@ -12,7 +12,7 @@ api = Namespace("user", description="user related services")
 mandatory_field = ["name", "phone", "password"]
 
 
-@api.route("register")
+@api.route("/register")
 class CreateUser(Resource):
     @api.doc(responses={200: "OK", 201: "CREATED"}, params={})
     def post(self):
@@ -23,7 +23,8 @@ class CreateUser(Resource):
         user_info["phone"] = data.get("phone")
         user_info["password"] = generate_password_hash(data.get("password"))
         for field in mandatory_field:
-            return Response(HTTPStatus.BAD_REQUEST).error(error=HTTPStatus.BAD_REQUEST,
+            if not user_info[field]:
+                return Response(HTTPStatus.BAD_REQUEST).error(error=HTTPStatus.BAD_REQUEST,
                                                           detail=f"{field} is required"), HTTPStatus.BAD_REQUEST
         try:
             user_result = user_service.create_user(user_info)
@@ -127,7 +128,7 @@ class AddRoleAndGetRoles(Resource):
                                                                     detail=str(e)), HTTPStatus.INTERNAL_SERVER_ERROR
 
 
-@api.route("/<string:user_id>/roles/<string:role_id")
+@api.route("/<string:user_id>/roles/<string:role_id>")
 class DeleteUserRole(Resource):
     @api.doc(responses={200: "OK"}, params={})
     def delete(self, user_id, role_id):

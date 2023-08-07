@@ -1,4 +1,5 @@
 import json
+import uuid
 
 from my_api.sql_alchemy.client import sql
 from my_api.sql_alchemy.managers import user_manager, user_role_manager
@@ -15,6 +16,7 @@ def user_dict(user):
 
 def create_user(data: dict):
     try:
+        data["user_id"] = str(uuid.uuid4())
         user, e = user_manager.add(sql.session, **data)
         sql.session.commit()
         user_info = user_dict(user)

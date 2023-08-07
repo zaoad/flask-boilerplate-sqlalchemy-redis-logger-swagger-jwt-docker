@@ -2,7 +2,7 @@ import json
 
 from my_api.sql_alchemy.client import sql
 from my_api.sql_alchemy.managers import user_role_manager
-from my_api.sql_alchemy.models.roles import Role
+from my_api.sql_alchemy.models import Role
 from my_api.sql_alchemy.enums import StatusType
 
 

@@ -2,7 +2,8 @@ from uuid import uuid4
 
 from my_api.sql_alchemy.client import sql
 from my_api.sql_alchemy.models.base_model import BaseModel
-from my_api.sql_alchemy.models import UUID4_LEN, TABLE_NAME_USER, TABLE_ACCESS_NAME_USER_ROlE, TABLE_NAME_ROLE
+from my_api.sql_alchemy.models import UUID4_LEN, TABLE_NAME_USER, TABLE_ACCESS_NAME_USER_ROlE, TABLE_NAME_ROLE, TABLE_ACCESS_NAME_ROLE, TABLE_NAME_USER_ROlE,TABLE_ACCESS_NAME_USER
+
 
 
 USER_FULLNAME_LEN = 128
@@ -19,15 +20,11 @@ class User(BaseModel):
     email = sql.Column(sql.String(USER_EMAIL_LEN), nullable=True)
     password = sql.Column(sql.String(USER_PASSWORD_LEN), nullable=True, default="")
     roles = sql.relationship(
-        TABLE_NAME_ROLE,
+        "Role",
         secondary=TABLE_ACCESS_NAME_USER_ROlE,
-        back_populates=TABLE_NAME_USER,
-        lazy="select",  # list is not small, will give a query object
+        backref=TABLE_NAME_USER,
+        lazy="dynamic",  # list is not small, will give a query object
     )
 
-    def __init__(self, name, phone, email, pasword, user_id: str = str(uuid4())):
-        self.user_id = user_id
-        self.name = name
-        self.phone = phone
-        self.email = email
-        self.password =pasword
+
+

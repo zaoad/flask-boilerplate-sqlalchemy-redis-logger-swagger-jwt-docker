@@ -6,8 +6,12 @@ from my_api.sql_alchemy.managers import role_manager
 
 def create_role(data: dict):
     try:
-        role_manager.add(sql.session, **data)
+        role, e = role_manager.add(sql.session, **data)
         sql.session.commit()
+        role_info = dict()
+        role_info["id"] = role.id
+        role_info["name"] = role.name
+        return role_info
     except Exception as e:
         sql.session.rollback()
         raise e
