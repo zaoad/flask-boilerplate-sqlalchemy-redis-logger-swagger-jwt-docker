@@ -12,7 +12,7 @@ except AttributeError:  # pragma: no cover
 
 FLASK_ENV = os.getenv("FLASK_ENV", "development")
 LOGGING_ROOT = os.getenv("LOGGING_ROOT", "logs")
-LOGGING_CONFIG = os.getenv("LOGGING_CONFIG", f"instance/{FLASK_ENV}/logging.yaml")
+LOGGING_CONFIG = os.getenv("LOGGING_CONFIG", f"instance/{FLASK_ENV}/logging.json")
 
 
 # Sql database
