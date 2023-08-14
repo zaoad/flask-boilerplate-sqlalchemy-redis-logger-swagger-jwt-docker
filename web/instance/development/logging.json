@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "formatters": {
+    "default": {
+      "format": "[%(asctime)s.%(msecs)03d] [pid %(process)d] [%(levelname)s]: %(message)s",
+      "datefmt": "%Y-%m-%d %H:%M:%S"
+    },
+    "extended": {
+      "format": "[%(asctime)s.%(msecs)03d] [pid %(process)d] [%(levelname)s] - [%(module)s:%(lineno)d]: %(message)s",
+      "datefmt": "%Y-%m-%d %H:%M:%S"
+    }
+  },
+  "handlers": {
+    "console": {
+      "class": "logging.StreamHandler",
+      "stream": "ext://sys.stdout",
+      "formatter": "default",
+      "level": "DEBUG"
+    },
+    "file_handler": {
+      "class": "logging.handlers.TimedRotatingFileHandler",
+      "filename": "my-api.log",
+      "when": "D",
+      "interval": 2,
+      "backupCount": 5,
+      "formatter": "extended"
+    }
+  },
+  "root": {
+    "level": "DEBUG",
+    "handlers": [
+      "console"
+    ]
+  },
+  "loggers": {
+    "custom_logger": {
+      "handlers": [
+        "file_handler"
+      ]
+    }
+  }
+}

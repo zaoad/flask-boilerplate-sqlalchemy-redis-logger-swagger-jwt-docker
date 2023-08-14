@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from flask_cors import CORS
 
 from my_api.sql_alchemy import client as sql_client
+from my_api.logging import create_logger
 from my_api.apis import api_blueprint
 
 # Load environment variables from .env file
@@ -20,10 +21,14 @@ def create_app(app_name: str):
         instance_path=instance_path,
         instance_relative_config=True,
     )
-    print(instance_name, instance_path)
+    # print(instance_name, instance_path)
     # app.config.from_object("web.my_api.config")  # TODO this for running app using flask run
     app.config.from_object("my_api.config")
     app.config.from_pyfile(f"{instance_name}/application.cfg", silent=True)
+    # Create app logger
+    create_logger(app)
+
+    #register_extension
     sql_client.sql.init_app(app)
     CORS(app)
     app.register_blueprint(api_blueprint)
