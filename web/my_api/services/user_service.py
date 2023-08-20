@@ -1,5 +1,6 @@
 import json
 import uuid
+from werkzeug.security import check_password_hash
 
 from my_api.sql_alchemy.client import sql
 from my_api.sql_alchemy.managers import user_manager, user_role_manager
@@ -69,5 +70,18 @@ def get_all_active_users():
                 user_info = user_dict(user)
                 user_list.append(user_info)
         return user_list
+    except Exception as e:
+        raise e
+
+
+def check_phone_password(phone, password):
+    try:
+        user, e = user_manager.get_by_id(sql.session, phone=phone)
+        if not user:
+            return None
+        if check_password_hash(user.password, password):
+            return user_dict(user)
+        else:
+            return None
     except Exception as e:
         raise e
