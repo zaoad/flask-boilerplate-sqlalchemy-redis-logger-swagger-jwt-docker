@@ -3,6 +3,9 @@ from flask_restx import Namespace, Resource
 from flask import request
 from werkzeug.security import generate_password_hash, check_password_hash
 
+from my_api.security.helpers import access_required, role_required
+from my_api.security.token_type import TokenType
+from my_api.sql_alchemy.enums import RoleType
 from my_api.utils import Response
 from my_api.services import user_service, user_role_service, role_service
 from my_api.utils import format_update_data
@@ -14,6 +17,8 @@ mandatory_field = ["name", "phone", "password"]
 
 @api.route("/register")
 class CreateUser(Resource):
+    @access_required(TokenType.ACCESS_TOKEN)
+    @role_required(RoleType.ADMIN)
     @api.doc(responses={200: "OK", 201: "CREATED"}, params={})
     def post(self):
         data = request.get_json()
@@ -25,7 +30,7 @@ class CreateUser(Resource):
         for field in mandatory_field:
             if not user_info[field]:
                 return Response(HTTPStatus.BAD_REQUEST).error(error=HTTPStatus.BAD_REQUEST,
-                                                          detail=f"{field} is required"), HTTPStatus.BAD_REQUEST
+                                                              detail=f"{field} is required"), HTTPStatus.BAD_REQUEST
         try:
             user_result = user_service.create_user(user_info)
             return Response(HTTPStatus.CREATED).success(data=user_result), HTTPStatus.CREATED
@@ -36,6 +41,8 @@ class CreateUser(Resource):
 
 @api.route("")
 class GetAllUsers(Resource):
+    @access_required(TokenType.ACCESS_TOKEN)
+    @role_required(RoleType.ADMIN)
     @api.doc(responses={200: "OK"}, params={})
     def get(self):
         try:
@@ -48,6 +55,8 @@ class GetAllUsers(Resource):
 
 @api.route("/<string:user_id>")
 class UpdateUser(Resource):
+    @access_required(TokenType.ACCESS_TOKEN)
+    @role_required(RoleType.ADMIN)
     @api.doc(responses={200: "OK"}, params={})
     def get(self, user_id):
         try:
@@ -60,6 +69,8 @@ class UpdateUser(Resource):
             return Response(HTTPStatus.INTERNAL_SERVER_ERROR).error(error=HTTPStatus.INTERNAL_SERVER_ERROR,
                                                                     detail=str(e)), HTTPStatus.INTERNAL_SERVER_ERROR
 
+    @access_required(TokenType.ACCESS_TOKEN)
+    @role_required(RoleType.ADMIN)
     @api.doc(responses={200: "OK"}, params={})
     def put(self, user_id):
         try:
@@ -79,6 +90,8 @@ class UpdateUser(Resource):
             return Response(HTTPStatus.INTERNAL_SERVER_ERROR).error(error=HTTPStatus.INTERNAL_SERVER_ERROR,
                                                                     detail=str(e)), HTTPStatus.INTERNAL_SERVER_ERROR
 
+    @access_required(TokenType.ACCESS_TOKEN)
+    @role_required(RoleType.ADMIN)
     @api.doc(responses={200: "OK"}, params={})
     def delete(self, user_id):
         try:
@@ -94,6 +107,8 @@ class UpdateUser(Resource):
 
 @api.route("/<string:user_id>/roles")
 class AddRoleAndGetRoles(Resource):
+    @access_required(TokenType.ACCESS_TOKEN)
+    @role_required(RoleType.ADMIN)
     @api.doc(responses={200: "OK", 201: "CREATED"}, params={})
     def post(self, user_id):
         if not user_service.get_user_info(user_id):
@@ -115,6 +130,8 @@ class AddRoleAndGetRoles(Resource):
             return Response(HTTPStatus.INTERNAL_SERVER_ERROR).error(error=HTTPStatus.INTERNAL_SERVER_ERROR,
                                                                     detail=str(e)), HTTPStatus.INTERNAL_SERVER_ERROR
 
+    @access_required(TokenType.ACCESS_TOKEN)
+    @role_required(RoleType.ADMIN)
     @api.doc(responses={200: "OK"}, params={})
     def get(self, user_id):
         try:
@@ -130,6 +147,8 @@ class AddRoleAndGetRoles(Resource):
 
 @api.route("/<string:user_id>/roles/<string:role_id>")
 class DeleteUserRole(Resource):
+    @access_required(TokenType.ACCESS_TOKEN)
+    @role_required(RoleType.ADMIN)
     @api.doc(responses={200: "OK"}, params={})
     def delete(self, user_id, role_id):
         try:

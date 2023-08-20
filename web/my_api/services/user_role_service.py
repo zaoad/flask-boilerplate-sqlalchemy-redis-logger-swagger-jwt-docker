@@ -35,7 +35,7 @@ def get_user_roles_name(user_id):
         if user_role_list:
             role_list = [user_role.role_id for user_role in user_role_list]
             role_list = Role.query.filter(Role.id.in_(role_list)).all()
-            role_names = [role.name for role in role_list]
+            role_names = [role.name.lower() for role in role_list]
             return role_names
         return []
     except Exception as e:

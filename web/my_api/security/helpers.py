@@ -114,7 +114,7 @@ def role_required(*role_types: RoleType):
         def wrapper(*args, **kwargs):
             auth_data = get_session_data()
             roles = auth_data.user_roles
-            valid_roles = list(set([rt.name for rt in role_types]).intersection(roles))
+            valid_roles = list(set([rt.name.lower() for rt in role_types]).intersection(roles))
             if not valid_roles:
                 raise NoAuthorizationError("Unauthorized")
             return fn(*args, **kwargs)

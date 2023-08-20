@@ -2,6 +2,9 @@ from http import HTTPStatus
 from flask_restx import Namespace, Resource
 from flask import request
 
+from my_api.security.helpers import access_required, role_required
+from my_api.security.token_type import TokenType
+from my_api.sql_alchemy.enums import RoleType
 from my_api.utils import Response
 from my_api.services import role_service
 from my_api.utils import format_update_data
@@ -11,6 +14,8 @@ api = Namespace("role", description="role related services")
 
 @api.route("")
 class CreateAndGetAllRole(Resource):
+    @access_required(TokenType.ACCESS_TOKEN)
+    @role_required(RoleType.ADMIN)
     @api.doc(responses={200: "OK", 201: "CREATED"}, params={})
     def post(self):
         data = request.get_json()
@@ -26,6 +31,8 @@ class CreateAndGetAllRole(Resource):
             return Response(HTTPStatus.INTERNAL_SERVER_ERROR).error(error=HTTPStatus.INTERNAL_SERVER_ERROR,
                                                                     detail=str(e)), HTTPStatus.INTERNAL_SERVER_ERROR
 
+    @access_required(TokenType.ACCESS_TOKEN)
+    @role_required(RoleType.ADMIN)
     @api.doc(responses={200: "OK"}, params={})
     def get(self):
         try:
@@ -38,7 +45,8 @@ class CreateAndGetAllRole(Resource):
 
 @api.route("/<string:role_id>")
 class UpdateRole(Resource):
-
+    @access_required(TokenType.ACCESS_TOKEN)
+    @role_required(RoleType.ADMIN)
     @api.doc(responses={200: "OK"}, params={})
     def put(self, role_id):
         if not role_service.get_role_info(role_id):
@@ -55,6 +63,8 @@ class UpdateRole(Resource):
             return Response(HTTPStatus.INTERNAL_SERVER_ERROR).error(error=HTTPStatus.INTERNAL_SERVER_ERROR,
                                                                     detail=str(e)), HTTPStatus.INTERNAL_SERVER_ERROR
 
+    @access_required(TokenType.ACCESS_TOKEN)
+    @role_required(RoleType.ADMIN)
     @api.doc(responses={200: "OK"}, params={})
     def delete(self, role_id):
         try:
