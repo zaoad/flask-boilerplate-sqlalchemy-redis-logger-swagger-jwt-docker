@@ -57,3 +57,56 @@ class login(Resource):
             return Response(HTTPStatus.INTERNAL_SERVER_ERROR).error(error=HTTPStatus.INTERNAL_SERVER_ERROR,
                                                                     detail=str(e)), HTTPStatus.INTERNAL_SERVER_ERROR
 
+
+@api.route("/refresh")
+class Refresh(Resource):
+    @access_required(TokenType.REFRESH_TOKEN)
+    @api.doc(security="Refresh Token")
+    def post(self):
+        auth_data = get_session_data()
+        app.logger.info(f"Refresh token requested from {auth_data.user_identity}")
+        try:
+            auth_payload = AuthPayload(
+                token_type=TokenType.ACCESS_TOKEN,
+                user_identity=auth_data.user_identity,
+                user_roles=auth_data.user_roles,
+                user_data=auth_data.user_data,
+            )
+            data = {
+                "access_token": create_jwt_token(auth_payload, ttl=app.config["JWT_ACCESS_TOKEN_EXPIRES"]),
+                "user_id": auth_data.user_identity,
+            }
+            if app.config["EXTEND_REFRESH_TOKEN"]:
+                refresh_payload = auth_payload.duplicate_for(TokenType.REFRESH_TOKEN)
+                data["refresh_token"] = create_jwt_token(
+                    refresh_payload, ttl=app.config["JWT_REFRESH_TOKEN_EXPIRES"]
+                )
+            return data, 200
+
+        except Exception as e:
+            app.logger.error("Exception occurred: " + str(e) + "\n" + traceback.format_exc(limit=-20, chain=True))
+            return Response(HTTPStatus.INTERNAL_SERVER_ERROR).error(error=HTTPStatus.INTERNAL_SERVER_ERROR,
+                                                                    detail=str(e)), HTTPStatus.INTERNAL_SERVER_ERROR
+
+
+@api.route("/verify-token")
+class VerifyToken(Resource):
+    @access_required(TokenType.ACCESS_TOKEN)
+    @api.doc(security="Access Token")
+    def post(self):
+        auth_data = get_session_data()
+        user_id = auth_data.user_identity
+        app.logger.info(f"Authentication request for access token from {user_id}")
+        return Response(HTTPStatus.OK).success(data={"message": "token verified"}), HTTPStatus.OK
+
+
+@api.route("/logout")
+class Logout(Resource):
+    @access_required(TokenType.ANY)
+    @api.doc(security=["Access Token", "Refresh Token", "OTP Token", "Web Token"])
+    def post(self):
+        auth_data = get_session_data()
+        app.logger.info(f"Revoking token from {auth_data.user_identity}")
+        delete_token_data()
+        app.logger.info(f"Revoked {auth_data.token_type}")
+        return {"message": "Token revoked"}, 200
