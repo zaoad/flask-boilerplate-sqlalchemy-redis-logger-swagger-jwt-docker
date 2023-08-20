@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from flask_restx import Namespace, Resource
+from flask_restx import Namespace, Resource, fields
 from flask import request
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -14,12 +14,29 @@ api = Namespace("user", description="user related services")
 
 mandatory_field = ["name", "phone", "password"]
 
+user_update_model = api.model(
+    "user_data",
+    {
+        "name": fields.String(description="name"),
+        "email": fields.String(description="Email"),
+        "phone": fields.String(description="phone number"),
+        "password": fields.String(description="password"),
+    },
+)
+
+add_user_role_model = api.model(
+    "role_data", {
+        "role_id": fields.Integer(description="role id")
+    }
+)
+
 
 @api.route("/register")
 class CreateUser(Resource):
     @access_required(TokenType.ACCESS_TOKEN)
     @role_required(RoleType.ADMIN)
-    @api.doc(responses={200: "OK", 201: "CREATED"}, params={})
+    @api.expect(user_update_model)
+    @api.doc(responses={200: "OK", 201: "CREATED"}, params={}, security="Access Token")
     def post(self):
         data = request.get_json()
         user_info = dict()
@@ -43,7 +60,7 @@ class CreateUser(Resource):
 class GetAllUsers(Resource):
     @access_required(TokenType.ACCESS_TOKEN)
     @role_required(RoleType.ADMIN)
-    @api.doc(responses={200: "OK"}, params={})
+    @api.doc(responses={200: "OK"}, params={}, security="Access Token")
     def get(self):
         try:
             user_list = user_service.get_all_active_users()
@@ -57,7 +74,7 @@ class GetAllUsers(Resource):
 class UpdateUser(Resource):
     @access_required(TokenType.ACCESS_TOKEN)
     @role_required(RoleType.ADMIN)
-    @api.doc(responses={200: "OK"}, params={})
+    @api.doc(responses={200: "OK"}, params={}, security="Access Token")
     def get(self, user_id):
         try:
             user_info = user_service.get_user_info(user_id)
@@ -71,7 +88,8 @@ class UpdateUser(Resource):
 
     @access_required(TokenType.ACCESS_TOKEN)
     @role_required(RoleType.ADMIN)
-    @api.doc(responses={200: "OK"}, params={})
+    @api.expect(user_update_model)
+    @api.doc(responses={200: "OK"}, params={}, security="Access Token")
     def put(self, user_id):
         try:
             if not user_service.get_user_info(user_id):
@@ -92,7 +110,7 @@ class UpdateUser(Resource):
 
     @access_required(TokenType.ACCESS_TOKEN)
     @role_required(RoleType.ADMIN)
-    @api.doc(responses={200: "OK"}, params={})
+    @api.doc(responses={200: "OK"}, params={}, security="Access Token")
     def delete(self, user_id):
         try:
             if not user_service.get_user_info(user_id):
@@ -109,7 +127,8 @@ class UpdateUser(Resource):
 class AddRoleAndGetRoles(Resource):
     @access_required(TokenType.ACCESS_TOKEN)
     @role_required(RoleType.ADMIN)
-    @api.doc(responses={200: "OK", 201: "CREATED"}, params={})
+    @api.expect(add_user_role_model)
+    @api.doc(responses={200: "OK", 201: "CREATED"}, params={}, security="Access Token")
     def post(self, user_id):
         if not user_service.get_user_info(user_id):
             return Response(HTTPStatus.NOT_FOUND).error(error=HTTPStatus.NOT_FOUND,
@@ -132,7 +151,7 @@ class AddRoleAndGetRoles(Resource):
 
     @access_required(TokenType.ACCESS_TOKEN)
     @role_required(RoleType.ADMIN)
-    @api.doc(responses={200: "OK"}, params={})
+    @api.doc(responses={200: "OK"}, params={}, security="Access Token")
     def get(self, user_id):
         try:
             if not user_service.get_user_info(user_id):
@@ -149,7 +168,7 @@ class AddRoleAndGetRoles(Resource):
 class DeleteUserRole(Resource):
     @access_required(TokenType.ACCESS_TOKEN)
     @role_required(RoleType.ADMIN)
-    @api.doc(responses={200: "OK"}, params={})
+    @api.doc(responses={200: "OK"}, params={}, security="Access Token")
     def delete(self, user_id, role_id):
         try:
             if not user_role_service.get_user_role_info(user_id, role_id):

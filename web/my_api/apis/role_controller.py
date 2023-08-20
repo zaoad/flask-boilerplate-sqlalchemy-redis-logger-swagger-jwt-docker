@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from flask_restx import Namespace, Resource
+from flask_restx import Namespace, Resource, fields
 from flask import request
 
 from my_api.security.helpers import access_required, role_required
@@ -11,12 +11,19 @@ from my_api.utils import format_update_data
 
 api = Namespace("role", description="role related services")
 
+add_role_model = api.model(
+    "role_data", {
+        "name": fields.String(description="role id")
+    }
+)
+
 
 @api.route("")
 class CreateAndGetAllRole(Resource):
     @access_required(TokenType.ACCESS_TOKEN)
     @role_required(RoleType.ADMIN)
-    @api.doc(responses={200: "OK", 201: "CREATED"}, params={})
+    @api.expect(add_role_model)
+    @api.doc(responses={200: "OK", 201: "CREATED"}, params={}, security="Access Token")
     def post(self):
         data = request.get_json()
         role_info = dict()
@@ -33,7 +40,7 @@ class CreateAndGetAllRole(Resource):
 
     @access_required(TokenType.ACCESS_TOKEN)
     @role_required(RoleType.ADMIN)
-    @api.doc(responses={200: "OK"}, params={})
+    @api.doc(responses={200: "OK"}, params={}, security="Access Token")
     def get(self):
         try:
             role_list = role_service.get_all_active_roles()
@@ -47,7 +54,8 @@ class CreateAndGetAllRole(Resource):
 class UpdateRole(Resource):
     @access_required(TokenType.ACCESS_TOKEN)
     @role_required(RoleType.ADMIN)
-    @api.doc(responses={200: "OK"}, params={})
+    @api.expect(add_role_model)
+    @api.doc(responses={200: "OK"}, params={}, security="Access Token")
     def put(self, role_id):
         if not role_service.get_role_info(role_id):
             return Response(HTTPStatus.NOT_FOUND).error(error=HTTPStatus.NOT_FOUND,
@@ -65,7 +73,7 @@ class UpdateRole(Resource):
 
     @access_required(TokenType.ACCESS_TOKEN)
     @role_required(RoleType.ADMIN)
-    @api.doc(responses={200: "OK"}, params={})
+    @api.doc(responses={200: "OK"}, params={}, security="Access Token")
     def delete(self, role_id):
         try:
             if not role_service.get_role_info(role_id):

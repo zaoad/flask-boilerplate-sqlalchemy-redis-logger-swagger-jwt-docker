@@ -1,6 +1,6 @@
 import traceback
 from http import HTTPStatus
-from flask_restx import Namespace, Resource
+from flask_restx import Namespace, Resource, fields
 from flask import request, current_app as app
 
 from my_api.services import user_service, user_role_service
@@ -18,6 +18,13 @@ from my_api.security.helpers import (
 )
 
 api = Namespace("auth", description="auth related services")
+
+login_model = api.model(
+    "login_data", {
+        "phone": fields.String(description="phone number"),
+        "password": fields.String(description="password"),
+    }
+)
 
 
 @api.route("/login")
