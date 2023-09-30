@@ -15,6 +15,7 @@ load_dotenv()
 
 
 def create_app(app_name: str):
+    #create a comment for test"
     """Creates a Flask app"""
     instance_name = os.getenv("FLASK_ENV", "development")
     instance_path = os.path.join(os.getcwd(), "instance")
