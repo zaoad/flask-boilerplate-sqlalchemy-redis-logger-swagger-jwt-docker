@@ -6,6 +6,7 @@
 - Logger
 - swagger
 - docker
+- celery
 
 #### First go to the web directory
     cd web
