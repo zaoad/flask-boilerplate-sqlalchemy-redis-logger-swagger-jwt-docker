@@ -32,3 +32,5 @@ REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
 REDIS_PORT = os.getenv("REDIS_PORT", "6379")
 REDIS_PREFIX = os.getenv("REDIS_PREFIX", "my-api")
 REDIS_FAIL_ATTEMPTS_MAX = 5
+
+AUTHOR="Zaoad"
